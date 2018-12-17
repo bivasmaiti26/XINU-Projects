@@ -1,0 +1,21 @@
+Question: What is Orphan and Zombie processes?
+
+Answer:
+Orphan Process: As the name suggests, an orphan process is a process whose parent is no longer present or has terminated. For example, if a process A has a child B, and after a while process A is terminated, but process B is still running, process B will be an orphan process. Generally, a parent process should invoke the wait() system call to address this situation, so that the child gets terminated before the parent does. But if it does not invoke the wait() call, the process becomes an Orphan Process.
+"Linux and UNIX address this scenario by assigning the init process as the new parent to orphan processes. The init process periodically invokes wait(), thereby allowing the exit status of any orphaned process to be collected and releasing the orphan’s process identifier and process-table entry."- Operating System Concepts-SILBERSCHATZ,GALVIN,GAGNE, 9th Edition-Chapter 3
+
+Zombie Process: As the name suggests, zombie processes are already dead or as the OS lingo goes, "terminated".These are the processes which are already terminated, but their resources like address spaces, process control blocks, etc are still in the memory.  A more formal definition is as follows:
+"When a process terminates, its resources are deallocated by the operating system. However, its entry in the process table must remain there until the parent calls wait(), because the process table contains the process’s exit status. A process that has terminated, but whose parent has not yet called wait(), is known as a zombie process."- Operating System Concepts-SILBERSCHATZ,GALVIN,GAGNE, 9th Edition-Chapter 3
+
+Question: What are the changes that occur when the child process calls the exec system call to execute a new program?
+
+Answer: When the child process calls the exec family of commands to execute a new program, the process memory space of the child is replaced by the new program. The child process does not get back the control if the exec call is successful. Basically execution of the new program starts and the lines of code after the exec call are never executed. Consider the below example:
+	char* chargv[2] ;
+        chargv[0] = buffer ;
+        chargv[1] = "Hello World!";
+        estatus=execl(chargv[0],chargv[0],chargv[1],(char *)NULL);
+	printf("This line never gets printed");
+Here, the program execution ends at the exec call. If there is an error, we get back the value of the variable "estatus", else, we never get back the value of "estatus" and the "printf" command never gets executed. 
+Below is a summarization of the exec() system call: 
+"The exec() system call loads a binary file into memory (destroying the memory image of the program containing the exec() system call) and starts its execution."-Operating System Concepts-SILBERSCHATZ,GALVIN,GAGNE, 9th Edition-Chapter 3
+
